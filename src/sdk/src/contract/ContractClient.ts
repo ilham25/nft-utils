@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { ethers } from "ethers";
 import ContractFeatures from "./ContractFeatures";
+import ContractToken from "./ContractToken";
 import {
   ContractFeature,
   CreateContractOption,
@@ -17,12 +18,14 @@ export default class ContractClient {
   protected contractData: SavedContract;
 
   features: ContractFeatures;
+  token: ContractToken;
 
   constructor(url: string) {
     this.url = url;
     this.provider = new ethers.providers.Web3Provider(window.ethereum);
 
     this.features = this._initFeatures();
+    this.token = this._initToken();
 
     this._initContractData();
   }
@@ -61,7 +64,7 @@ export default class ContractClient {
         localStorage.setItem("contract", JSON.stringify(savedContract));
 
         this.contractData = savedContract;
-        this.features = this._initFeatures();
+        this._refresh();
 
         resolve({
           message: "Contract created!",
@@ -77,11 +80,20 @@ export default class ContractClient {
     return new ContractFeatures();
   }
 
+  private _initToken() {
+    return new ContractToken();
+  }
+
   private _initContractData() {
     const contractData = localStorage.getItem("contract");
     if (contractData) {
       const parsedContract: SavedContract = JSON.parse(contractData);
       this.contractData = parsedContract;
     }
+  }
+
+  private _refresh() {
+    this.features = this._initFeatures();
+    this.token = this._initToken();
   }
 }

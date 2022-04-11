@@ -36,10 +36,10 @@ export default class ContractFeatures {
           signer
         );
 
-        const disabling = await contract[this.featureSetterName[feature]](
-          false
-        );
-        const waiting = await disabling.wait();
+        const disabling: ethers.ContractTransaction = await contract[
+          this.featureSetterName[feature]
+        ](false);
+        const waiting: ethers.ContractReceipt = await disabling.wait();
 
         resolve({
           feature,
@@ -47,11 +47,12 @@ export default class ContractFeatures {
           status: false,
           transaction: waiting,
         });
-      } catch (error) {
+      } catch (error: any) {
         console.log("ContractFeatures.disable err", error);
         _reject({
           feature,
-          message: String(error),
+          message:
+            typeof error === "string" ? String(error) : error?.data?.message,
         });
       }
     });
@@ -66,8 +67,10 @@ export default class ContractFeatures {
           signer
         );
 
-        const enabling = await contract[this.featureSetterName[feature]](true);
-        const waiting = await enabling.wait();
+        const enabling: ethers.ContractTransaction = await contract[
+          this.featureSetterName[feature]
+        ](true);
+        const waiting: ethers.ContractReceipt = await enabling.wait();
 
         resolve({
           feature,
@@ -75,11 +78,12 @@ export default class ContractFeatures {
           status: true,
           transaction: waiting,
         });
-      } catch (error) {
+      } catch (error: any) {
         console.log("ContractFeatures.enable err", error);
         _reject({
           feature,
-          message: String(error),
+          message:
+            typeof error === "string" ? String(error) : error?.data?.message,
         });
       }
     });
@@ -96,11 +100,15 @@ export default class ContractFeatures {
         );
 
         const status = await contract[this.featureGetterName[feature]]();
-        console.log(status);
+
         resolve({ feature, status });
-      } catch (error) {
+      } catch (error: any) {
         console.log("ContractFeatures.status err", error);
-        _reject({ feature, message: String(error) });
+        _reject({
+          feature,
+          message:
+            typeof error === "string" ? String(error) : error?.data?.message,
+        });
       }
     });
   }

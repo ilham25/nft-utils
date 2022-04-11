@@ -58,6 +58,14 @@ function App() {
       console.log("err", error);
     }
   };
+  const tokenMint = async () => {
+    try {
+      const mint = await openCrypt.contract.token.mint();
+      console.log(mint, "mint");
+    } catch (error) {
+      console.log("err", error);
+    }
+  };
 
   return (
     <div>
@@ -69,6 +77,7 @@ function App() {
         <button onClick={enableMint}>Enable mint</button>
         <button onClick={disableMint}>Disable mint</button>
         <button onClick={statusMint}>Mint status</button>
+        <button onClick={tokenMint}>Mint token</button>
       </div>
     </div>
   );

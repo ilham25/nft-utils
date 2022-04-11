@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 type ContractAbiInputs = {
   indexed: boolean;
   internalType: string;
@@ -43,5 +45,13 @@ export type ChangeFeatureStatusResponse = {
   message?: string;
   feature: ContractFeature;
   status?: boolean;
-  transaction?: any;
+  transaction?: ethers.ContractReceipt;
+};
+
+export type MintTokenOption = {
+  address: string;
+};
+
+export type MintTokenResponse = {
+  transaction: ethers.ContractReceipt | null | undefined;
 };
