@@ -19,8 +19,12 @@ export interface CompiledContract {
 export interface DeployedContract extends CompiledContract {
   address: string;
 }
+
+export type ContractFeature = "mintable" | "burnable";
+
 export type CreateContractOption = {
   name: string;
+  features?: ContractFeature[];
 };
 
 export type CreateContractResponse = {
@@ -31,4 +35,13 @@ export type CreateContractResponse = {
 export type GetCompiledContractResponse = {
   message: string;
   contract?: CompiledContract;
+};
+
+export interface SavedContract extends Omit<DeployedContract, "bytecode"> {}
+
+export type ChangeFeatureStatusResponse = {
+  message?: string;
+  feature: ContractFeature;
+  status?: boolean;
+  transaction?: any;
 };

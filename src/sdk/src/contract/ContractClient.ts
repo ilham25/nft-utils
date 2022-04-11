@@ -1,22 +1,36 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { ethers } from "ethers";
+import ContractFeatures from "./ContractFeatures";
 import {
+  ContractFeature,
   CreateContractOption,
   CreateContractResponse,
   DeployedContract,
   GetCompiledContractResponse,
+  ContractAbi,
+  SavedContract,
 } from "./lib/types";
 
 export default class ContractClient {
   protected url: string;
   protected provider: ethers.providers.Web3Provider;
+  protected contractData: SavedContract;
+
+  features: ContractFeatures;
 
   constructor(url: string) {
     this.url = url;
     this.provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    this.features = this._initFeatures();
+
+    this._initContractData();
   }
 
   async create(option: CreateContractOption): Promise<CreateContractResponse> {
+    let defaultFeatures: [ContractFeature] = ["mintable"];
+    option.features = !option.features ? defaultFeatures : option.features;
+
     return new Promise(async (resolve, _reject) => {
       try {
         const query = option;
@@ -38,6 +52,16 @@ export default class ContractClient {
           address: deployedContract.address,
         };
 
+        const savedContract: SavedContract = {
+          abi: contract.abi,
+          address: contract.address,
+          name: contract.name,
+        };
+
+        localStorage.setItem("contract", JSON.stringify(savedContract));
+
+        this.contractData = savedContract;
+
         resolve({
           message: "Contract created!",
           contract,
@@ -46,5 +70,17 @@ export default class ContractClient {
         console.log("err", error);
       }
     });
+  }
+
+  private _initFeatures() {
+    return new ContractFeatures();
+  }
+
+  private _initContractData() {
+    const contractData = localStorage.getItem("contract");
+    if (contractData) {
+      const parsedContract: SavedContract = JSON.parse(contractData);
+      this.contractData = parsedContract;
+    }
   }
 }
