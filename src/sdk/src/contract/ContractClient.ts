@@ -61,6 +61,7 @@ export default class ContractClient {
         localStorage.setItem("contract", JSON.stringify(savedContract));
 
         this.contractData = savedContract;
+        this.features = this._initFeatures();
 
         resolve({
           message: "Contract created!",

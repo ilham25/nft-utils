@@ -96,11 +96,11 @@ export default class ContractFeatures {
         );
 
         const status = await contract[this.featureGetterName[feature]]();
-
+        console.log(status);
         resolve({ feature, status });
       } catch (error) {
         console.log("ContractFeatures.status err", error);
-        resolve({ feature, message: String(error) });
+        _reject({ feature, message: String(error) });
       }
     });
   }
