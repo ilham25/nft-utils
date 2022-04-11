@@ -1,24 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ethers } from "ethers";
+import openCrypt from "./lib/client";
 
 function App() {
+  const login = async () => {
+    try {
+      const address = await openCrypt.auth.login();
+    } catch (error: any) {
+      console.log("err", String(error.message));
+    }
+  };
+
+  const createSmartContract = async () => {
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      const createContract = await openCrypt.contract.create({
+        name: "ContohContract",
+      });
+
+      console.log(createContract, "createContract");
+    } catch (error) {
+      console.log("err", error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={login}>Login</button>
+      <button onClick={createSmartContract}>Create smart contract</button>
     </div>
   );
 }
